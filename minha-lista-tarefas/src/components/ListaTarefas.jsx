@@ -19,6 +19,7 @@ function ListaTarefas(){
     const adicionarTarefa = () => {
         if (novaTarefa.trim() !== ''){
             const nova = {
+                id: Date.now(),//indentificador 
                 texto: novaTarefa.trim(),
                 concluida: false,
                 dataCriacao: new Date().toString()
@@ -28,14 +29,15 @@ function ListaTarefas(){
         }
     };
 
-    const removerTarefa = (indice) => {
-        setTarefas(tarefas.filter((_, i)=> i !== indice));
+    const removerTarefa = (id) => {
+        setTarefas(tarefas.filter((tarefa)=> tarefa.id !== id));
     };
 
     //usado para utilizar o estado dentro da conclusão/checkbox
-    const alternarConclusao = (indice) => {
-        const novaTarefas = [...tarefas];
-        novaTarefas[indice].concluida = !novaTarefas[indice].concluida;
+    const alternarConclusao = (id) => {
+        const novaTarefas = tarefas.map((tarefa)=>
+         tarefa.id === id ? {...tarefa, concluida: !tarefa.concluida} : tarefa 
+        );
         setTarefas(novaTarefas);
     };
 
@@ -77,8 +79,8 @@ function ListaTarefas(){
             </div>
 
             <ul>
-                {ordenarTarefas(tarefas).map((tarefa, indice) => (
-                    <li key={indice} className={tarefa.concluida ? 'concluida' : ''}>
+                {ordenarTarefas(tarefas).map((tarefa) => (
+                    <li key={tarefa.id} className={tarefa.concluida ? 'concluida' : ''}>
                         <span
                             className='texto-tarefa'
                             style={{
@@ -87,8 +89,13 @@ function ListaTarefas(){
                             }}>
                             {tarefa.texto}
                         </span>
-                        <input className='checkbox' type="checkbox" checked={tarefa.concluida} onChange={() => alternarConclusao(indice)} />
-                        <button className='remov' onClick={() => removerTarefa(indice)}>x</button>
+                        <input 
+                        className='checkbox'
+                        type="checkbox"
+                        checked={tarefa.concluida} 
+                        onChange={() => alternarConclusao(tarefa.id)} />
+
+                        <button className='remov' onClick={() => removerTarefa(tarefa.id)}>x</button>
                     </li>
                 ))}
             </ul>
